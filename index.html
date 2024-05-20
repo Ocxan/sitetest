@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Green API Test Task</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            height: 100vh;
+            padding: 0 50px;
+        }
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+        }
+        .response-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            width: 100%;
+            max-width: 500px;
+        }
+        .response-container pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="buttons-container">
+            <input type="text" id="idInstance" placeholder="ID Instance">
+            <input type="text" id="apiTokenInstance" placeholder="API Token Instance">
+            <button onclick="getSettings()">GetSettings</button>
+            <button onclick="getStateInstance()">GetStateInstance</button>
+            <input type="text" id="chatId" placeholder="Chat ID">
+            <input type="text" id="message" placeholder="Message">
+            <button onclick="sendMessage()">SendMessage</button>
+            <input type="text" id="fileUrl" placeholder="File URL">
+            <input type="text" id="caption" placeholder="Caption">
+            <button onclick="sendFileByUrl()">SendFileByUrl</button>
+            <input type="file" id="fileInput">
+            <button onclick="sendFileByUpload()">SendFileByUpload</button>
+        </div>
+        <div class="response-container">
+            <h2>Response:</h2>
+            <pre id="response"></pre>
+        </div>
+    </div>
+
+    <script>
+        const apiUrl = 'https://api.green-api.com';
+        const mediaUrl = 'https://media.green-api.com';
+
+        function getSettings() {
+            const idInstance = document.getElementById('idInstance').value;
+            const apiTokenInstance = document.getElementById('apiTokenInstance').value;
+            const url = `${apiUrl}/waInstance${idInstance}/getSettings/${apiTokenInstance}`;
+            fetch(url)
+                .then(response => response.text())
+                .then(text => document.getElementById('response').innerText = text)
+                .catch(error => console.error(error));
+        }
+
+        function getStateInstance() {
+            const idInstance = document.getElementById('idInstance').value;
+            const apiTokenInstance = document.getElementById('apiTokenInstance').value;
+            const url = `${apiUrl}/waInstance${idInstance}/getStateInstance/${apiTokenInstance}`;
+            fetch(url)
+                .then(response => response.text())
+                .then(text => document.getElementById('response').innerText = text)
+                .catch(error => console.error(error));
+        }
+
+        function sendMessage() {
+            const idInstance = document.getElementById('idInstance').value;
+            const apiTokenInstance = document.getElementById('apiTokenInstance').value;
+            const chatId = document.getElementById('chatId').value;
+            const message = document.getElementById('message').value;
+            const url = `${apiUrl}/waInstance${idInstance}/sendMessage/${apiTokenInstance}`;
+            const data = {
+                chatId: chatId,
+                message: message,
+                linkPreview: false,
+            };
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => response.text())
+                .then(text => document.getElementById('response').innerText = text)
+                .catch(error => console.error(error));
+        }
+
+        function sendFileByUrl() {
+            const idInstance = document.getElementById('idInstance').value;
+            const apiTokenInstance = document.getElementById('apiTokenInstance').value;
+            const chatId = document.getElementById('chatId').value;
+            const fileUrl = document.getElementById('fileUrl').value;
+            const caption = document.getElementById('caption').value;
+            const url = `${apiUrl}/waInstance${idInstance}/sendFileByUrl/${apiTokenInstance}`;
+            const data = {
+                chatId: chatId,
+                fileUrl: fileUrl,
+                caption: caption,
+            };
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => response.text())
+                .then(text => document.getElementById('response').innerText = text)
+                .catch(error => console.error(error));
+        }
+
+        function sendFileByUpload() {
+            const idInstance = document.getElementById('idInstance').value;
+            const apiTokenInstance = document.getElementById('apiTokenInstance').value;
+            const chatId = document.getElementById('chatId').value;
+            const fileInput = document.getElementById('fileInput');
+            const url = `${apiUrl}/waInstance${idInstance}/sendFileByUpload/${apiTokenInstance}`;
+            const formData = new FormData();
+            formData.append('chatId', chatId);
+            formData.append('file', fileInput.files[0]);
+            fetch(url, {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.text())
+                .then(text => document.getElementById('response').innerText = text)
+                .catch(error => console.error(error));
+        }
+    </script>
+</body>
+</html>
